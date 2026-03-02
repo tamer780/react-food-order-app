@@ -1,128 +1,153 @@
-import { use } from "react";
-import Button from "../UI/Button.jsx";
+import { useActionState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import Input from "../UI/Input.jsx";
 import Modal from "../UI/Modal.jsx";
+import Button from "../UI/Button.jsx";
 import Submit from "../UI/Submit.jsx";
-import {
-  isEmail,
-  isMinLength,
-  isNotEmpty,
-  isPostalCode,
-} from "../../utils/validations.js";
 
-import { ModalContext } from "../../store/ModalContext.jsx";
-import { CartContextApi } from "../../store/CartContext.jsx";
-import { currencyFormatter } from "../../utils/formatter.js";
-import { useActionState } from "react";
-import { sendMealRequest } from "../../utils/httpRequest.js";
-import SuccessPage from "../UI/SuccessPage.jsx";
+import { currenyFormatter } from "../../utils/formatter.js";
+import { isEmail, isNotEmpty, isPostalCode } from "../../utils/validation.js";
+import { useFetch } from "../../hooks/useFetch.jsx";
+import { cartActions } from "../../store/cartSlice.js";
+import { uiAction } from "../../store/uiSlice.js";
+
+const configObject = {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+};
 
 export default function Checkout() {
-  const { state, hideModal } = use(ModalContext);
+  const dispatch = useDispatch();
+  const modalType = useSelector((state) => state.ui.modalType);
+  const cartItems = useSelector((state) => state.cart.items);
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
 
-  const { cart, clearCart } = use(CartContextApi);
-
-  const totalPrice = cart.reduce(
-    (totalPrice, meal) => totalPrice + meal.quantity * meal.price,
-    0,
+  const { sendRequest } = useFetch(
+    "http://localhost:3000/orders",
+    null,
+    configObject,
   );
 
-  async function handleFormAction(prev, formData) {
-    const userData = Object.fromEntries(formData.entries());
+  const [formState, formAction] = useActionState(handleFormAction, {
+    userInfo: {},
+    errors: null,
+  });
 
-    const { name, email, street, city, "postal-code": postalCode } = userData;
+  function handleClose() {
+    dispatch(uiAction.hideModal());
+  }
 
-    const errors = [];
+  function handleFinish() {
+    dispatch(uiAction.hideModal());
+    dispatch(cartActions.clearCart());
+  }
 
-    if (!isEmail(email)) errors.push("Invalid email.");
-    if (!isNotEmpty(name) || !isMinLength(name, 3))
-      errors.push("Name too short.");
-    if (!isNotEmpty(street)) errors.push("Street required.");
-    if (!isNotEmpty(city)) errors.push("City required.");
-    if (!isNotEmpty(postalCode) || !isPostalCode(postalCode))
-      errors.push("Invalid Postal Code.");
+  async function handleFormAction(prevFormState, formData) {
+    const userInfo = Object.fromEntries(formData.entries());
+    const { name, email, street, city, "postal-code": postalCode } = userInfo;
 
-    if (errors.length > 0) {
-      return {
-        userData,
-        errors,
-      };
-    }
+    let errors = {};
+
+    if (!isNotEmpty(name)) errors.name = "Name is required.";
+    if (!isEmail(email)) errors.email = "Invalid email address.";
+    if (!isNotEmpty(street)) errors.street = "Street is required.";
+    if (!isNotEmpty(city)) errors.city = "City is required.";
+    if (!isPostalCode(postalCode))
+      errors.postalCode = "Invalid postal code (5 digits).";
+
+    if (Object.keys(errors).length > 0) return { errors, values: userInfo };
+
     try {
-      await sendMealRequest(cart, userData);
-      clearCart();
+      await sendRequest({ order: { customer: userInfo, items: cartItems } });
+
       return { success: true };
     } catch (error) {
       return {
-        errors: ["Failed to post data" || error.message],
+        errors: { error: error.message },
+        values: userInfo,
       };
     }
   }
 
-  const [formState, formAction] = useActionState(handleFormAction, {
-    userData: {},
-    errors: null,
-  });
-
-  if (formState.success) {
+  if (formState?.success && modalType === "checkout") {
     return (
-      <Modal open={state === "checkout"} onClose={() => hideModal("")}>
-        <SuccessPage onSuccess={() => hideModal("")} />
+      <Modal open={modalType === "checkout"} onClose={handleFinish}>
+        <div className="text-center p-4">
+          <h2 className="text-2xl font-bold text-primary mb-4">Success!</h2>
+          <p className="text-stone-600 mb-6">
+            Your order has been submitted successfully.
+          </p>
+          <div className="flex justify-end">
+            <Button onClick={handleFinish}>Okay</Button>
+          </div>
+        </div>
       </Modal>
     );
   }
 
   return (
-    <Modal open={state === "checkout"} onClose={() => hideModal("")}>
+    <Modal open={modalType === "checkout"} onClose={handleClose}>
       <form action={formAction}>
-        <h2>Checkout</h2>
-        <p>Total Amount: {currencyFormatter.format(totalPrice)}</p>
-        <Input
-          label="Full-name"
-          id="name"
-          type="text"
-          defaultValue={formState.userData?.name}
-        />
-        <Input
-          label="Email Adress"
-          type="email"
-          id="email"
-          defaultValue={formState.userData?.email}
-        />
-        <Input
-          label="Street"
-          type="text"
-          id="street"
-          defaultValue={formState.userData?.street}
-        />
-        <div className="control-row">
-          <Input
-            label="Postal Code"
-            type="text"
-            id="postal-code"
-            defaultValue={formState.userData?.postalCode}
-          />
-          <Input
-            label="City"
-            type="text"
-            id="city"
-            defaultValue={formState.userData?.city}
-          />
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="font-bold text-2xl font-lato">Checkout</h2>
+          <p className="text-xl font-lato text-right">
+            Total: {currenyFormatter.format(totalPrice)}
+          </p>
         </div>
 
-        {formState.errors?.length > 0 && (
-          <ul className="error">
-            {formState.errors.map((err, index) => (
-              <li key={index}>{err}</li>
-            ))}
-          </ul>
+        <div className="space-y-2">
+          <Input
+            label="Full-Name"
+            id="name"
+            type="text"
+            defaultValue={formState.values?.name}
+            error={formState.errors?.name}
+          />
+          <Input
+            label="Email"
+            id="email"
+            type="email"
+            error={formState.errors?.email}
+            defaultValue={formState.values?.email}
+          />
+          <Input
+            label="Street"
+            id="street"
+            type="text"
+            error={formState.errors?.street}
+            defaultValue={formState.values?.street}
+          />
+          <div className="flex gap-4">
+            <Input
+              label="City"
+              id="city"
+              type="text"
+              error={formState.errors?.city}
+              defaultValue={formState.values?.city}
+            />
+            <Input
+              label="Postal-Code"
+              id="postal-code"
+              type="text"
+              error={formState.errors?.postalCode}
+              defaultValue={formState.values?.postalCode}
+            />
+          </div>
+        </div>
+
+        {formState.errors?.error && (
+          <div className="bg-red-50 border-l-4 border-red-500 p-3 mt-4 rounded">
+            <p className="text-red-700 text-sm font-medium">
+              {formState.errors.error || "Failed to send data!"}
+            </p>
+          </div>
         )}
 
-        <p className="modal-actions">
-          <Button textOnly onClick={() => hideModal("")}>
-            Close
+        <p className="flex justify-end items-center gap-4 mt-8">
+          <Button type="button" textOnly onClick={handleClose}>
+            Cancel
           </Button>
-
           <Submit />
         </p>
       </form>

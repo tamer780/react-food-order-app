@@ -1,29 +1,35 @@
-import MealItem from "./MealItem.jsx";
-import { fetchMeals } from "../../utils/httpRequest.js";
-import { useFetch } from "../../hooks/useHttp.js";
+import { useFetch } from "../../hooks/useFetch.jsx";
 import ErrorPage from "../UI/ErrorPage.jsx";
-export default function Meals() {
-  const { data: meals, isLoading, isError } = useFetch(fetchMeals, []);
+import MealItem from "./MealItem.jsx";
 
-  if (isError) {
+export default function Meals() {
+  const {
+    data: meals,
+    loading,
+    error,
+  } = useFetch("http://localhost:3000/meals", []);
+
+  if (loading) {
     return (
-      <ErrorPage
-        title="Failed to fetch meals"
-        message={isError.message || "Something went wrong!"}
-      />
+      <div className="flex justify-center items-center min-h-50">
+        <p className="text-xl font-semibold animate-pulse text-gray-600">
+          Fetching data...
+        </p>
+      </div>
     );
   }
 
-  if (isLoading) {
-    return <p className="center">Fetching meals...</p>;
+  if (error) {
+    return <ErrorPage title="Failed to fetch meals" message={error.message} />;
   }
+
   return (
-    <ul id="meals">
-      {meals.length > 0 ? (
-        meals.map((meal) => <MealItem key={meal.id} meal={meal} />)
-      ) : (
-        <p className="center">No meals found.</p>
-      )}
-    </ul>
+    <section className="my-14">
+      <ul className="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] gap-4 w-[80%] max-w-280 mx-auto ">
+        {meals.map((meal) => (
+          <MealItem meal={meal} key={meal.id} />
+        ))}
+      </ul>
+    </section>
   );
 }
