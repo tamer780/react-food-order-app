@@ -1,20 +1,18 @@
+import { useSelector } from "react-redux";
 import Cart from "./components/cart/Cart.jsx";
 import Checkout from "./components/cart/Checkout.jsx";
 import Header from "./components/layouts/Header.jsx";
 import Meals from "./components/meals/Meals.jsx";
-import CartContext from "./store/CartContext.jsx";
-import ModalProvider from "./store/ModalContext.jsx";
 
 function App() {
+  const modalType = useSelector((state) => state.ui.modalType);
   return (
-    <ModalProvider>
-      <CartContext>
-        <Header />
-        <Meals />
-        <Cart />
-        <Checkout />
-      </CartContext>
-    </ModalProvider>
+    <>
+      <Header />
+      <Meals />
+      <Cart />
+      <Checkout key={modalType} />
+    </>
   );
 }
 
