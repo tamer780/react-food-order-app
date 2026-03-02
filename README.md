@@ -26,7 +26,7 @@ The original build focused on fundamental React concepts.
 | :--------------- | :-------------- | :-------------------------- |
 | **Global State** | Context API     | **Redux Toolkit**           |
 | **CSS**          | Native CSS      | **Tailwind CSS**            |
-| **Logic**        | Custom Hooks    | **Advanced Redux Slices**   |
+| **Logic**        | Context Api   | **Advanced Redux Slices**   |
 | **Architecture** | Component-based | **Feature-sliced inspired** |
 
 ## 🔗 The Migration Story
