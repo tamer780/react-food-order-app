@@ -1,43 +1,34 @@
-<<<<<<< HEAD
-# ReactFood 🍔 | Modern Ordering Application
+# 🍔 Food Order App - Evolution Project
 
-A sophisticated food ordering platform built with **React 19**. This project demonstrates advanced state management, performance optimization, and a clear roadmap from standard CSS to a modern tech stack.
+This project isn't just a food ordering app; it's a demonstration of **Architectural Evolution**. I built it twice to showcase my growth from basic state management to professional-grade enterprise patterns.
 
+## 🚀 Version 2.0: The Modern Refactor (Current)
 
+In this version, I completely re-architected the app to handle scale and complexity.
 
-## 🚀 Key Features (Current Implementation)
-- **React 19 "use" Hook**: Streamlined context consumption and status handling.
-- **Complex State Management**: Cart logic implemented using `useReducer` to handle item additions, subtractions, and persistence.
-- **Context API Optimization**: Intensive use of `useMemo` and `useCallback` to prevent redundant re-renders and stabilize function references.
-- **Dynamic UI**: Responsive Modals and Form handling with native browser APIs integrated into React.
+- **State Management:** Migrated to **Redux Toolkit** for predictable state transitions.
+- **Styling:** Rewritten with **Tailwind CSS** for a faster, utility-first UI.
+- **Performance:** Optimized with React 19 patterns and Portals.
 
-## 🛠️ Tech Stack
-- **Framework**: React 19 (Free Tier)
-- **Styling**: Vanilla CSS (Base version)
-- **State**: Context API + useReducer
-- **Data Fetching**: Custom `useFetch` Hook (Abstraction layer)
+## 📜 Version 1.0: The Foundation (Legacy)
 
-## 🗺️ Roadmap (Upcoming Refactoring)
-I am currently evolving this project to meet industry-standard production requirements:
-- [ ] **Phase 1**: Full UI Refactor using **Tailwind CSS** for a modern, responsive design.
-- [ ] **Phase 2**: Replacing custom fetch hooks with **TanStack Query (React Query)** for superior caching and server-state management.
-- [ ] **Phase 3**: Migrating the codebase to **TypeScript** for type safety and better developer experience.
+The original build focused on fundamental React concepts.
 
-=======
-# React + Vite
+- **State Management:** Used **Context API**.
+- **Styling:** Native CSS.
+- **Codebase:** [Switch to v1-branch](https://github.com/tamer780/react-food-order-app/tree/v1.0)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+## 🛠 Tech Stack Comparison
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Feature          | v1.0 (Legacy)   | v2.0 (Modern)               |
+| :--------------- | :-------------- | :-------------------------- |
+| **Global State** | Context API     | **Redux Toolkit**           |
+| **CSS**          | Native CSS      | **Tailwind CSS**            |
+| **Logic**        | Custom Hooks    | **Advanced Redux Slices**   |
+| **Architecture** | Component-based | **Feature-sliced inspired** |
 
-## React Compiler
+## 🔗 The Migration Story
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
->>>>>>> v2-redux-tailwind-upgrade
+You can view the full transformation process in this **[Migration Pull Request](https://github.com/tamer780/react-food-order-app/pull/1)**. It shows exactly how I refactored +1,000 lines of code to improve maintainability.
