@@ -1,34 +1,70 @@
-# 🍔 Food Order App - Evolution Project
+# React Food Order App
 
-This project isn't just a food ordering app; it's a demonstration of **Architectural Evolution**. I built it twice to showcase my growth from basic state management to professional-grade enterprise patterns.
+A food-ordering practice project with a React frontend and a local Express API. Users can browse meals, manage cart quantities, enter delivery details, and submit an order.
 
-## 🚀 Version 2.0: The Modern Refactor (Current)
+## Features
 
-In this version, I completely re-architected the app to handle scale and complexity.
+- Fetch meals and images from the local API.
+- Add and remove cart items with derived quantity and price totals.
+- Open cart and checkout dialogs.
+- Validate checkout fields with React 19 `useActionState`.
+- Display request errors and an order confirmation.
+- Clear the cart when the confirmation is dismissed.
 
-- **State Management:** Migrated to **Redux Toolkit** for predictable state transitions.
-- **Styling:** Rewritten with **Tailwind CSS** for a faster, utility-first UI.
-- **Performance:** Optimized with React 19 patterns and Portals.
+## Stack
 
-## 📜 Version 1.0: The Foundation (Legacy)
+**Frontend:** React 19, Redux Toolkit, React Redux, Tailwind CSS 4, Vite.  
+**Local API:** Node.js, Express, JSON-file storage.
 
-The original build focused on fundamental React concepts.
+## Run locally
 
-- **State Management:** Used **Context API**.
-- **Styling:** Native CSS.
-- **Codebase:** [Switch to v1-branch](https://github.com/tamer780/react-food-order-app/tree/v1.0)
+Use a Node.js version compatible with the Vite version in `package.json`. Start both processes in separate terminals.
 
----
+### 1. Start the API
 
-## 🛠 Tech Stack Comparison
+```bash
+git clone https://github.com/tamer780/react-food-order-app.git
+cd react-food-order-app/backend
+npm install
+npm start
+```
 
-| Feature          | v1.0 (Legacy)   | v2.0 (Modern)               |
-| :--------------- | :-------------- | :-------------------------- |
-| **Global State** | Context API     | **Redux Toolkit**           |
-| **CSS**          | Native CSS      | **Tailwind CSS**            |
-| **Logic**        | Context Providers   | **Advanced Redux Slices**   |
-| **Architecture** | Component-based | **Feature-sliced inspired** |
+The API runs at `http://localhost:3000`. Run the command from `backend/` because the server uses relative paths for data and images.
 
-## 🔗 The Migration Story
+### 2. Start the frontend
 
-You can view the full transformation process in this **[Migration Pull Request](https://github.com/tamer780/react-food-order-app/pull/1)**. It shows exactly how I refactored +1,000 lines of code to improve maintainability.
+From the repository root:
+
+```bash
+npm ci
+npm run dev
+```
+
+Open the URL printed by Vite. Meal and order requests currently use the local API on port 3000.
+
+## Design decisions
+
+- `cartSlice` handles item quantities and totals; `uiSlice` controls the active dialog.
+- A reusable request hook separates fetching from component rendering.
+- Shared inputs and a portal-backed modal support the cart and checkout flow.
+- Client-side checkout validation preserves entered values after errors.
+
+Suggested review: [cart state](src/store/cartSlice.js), [checkout](src/components/cart/Checkout.jsx), and [Express routes](backend/app.js).
+
+## Refactor history
+
+The existing [migration pull request](https://github.com/tamer780/react-food-order-app/pull/1) documents the move from Context API and native CSS to Redux Toolkit and Tailwind CSS. The original README points to [v1.0](https://github.com/tamer780/react-food-order-app/tree/v1.0) for the earlier implementation.
+
+## Demo boundaries
+
+Orders are stored in `backend/data/orders.json`. This is a local learning API without payment processing or a database-backed production order system. Use fictional customer details when trying the demo. No automated test suite is included.
+
+## Frontend checks
+
+```bash
+npm run lint
+npm run build
+npm run preview
+```
+
+A frontend build does not bundle or start the Express API.
