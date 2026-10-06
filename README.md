@@ -53,7 +53,7 @@ Suggested review: [cart state](src/store/cartSlice.js), [checkout](src/component
 
 ## Refactor history
 
-The existing [migration pull request](https://github.com/tamer780/react-food-order-app/pull/1) documents the move from Context API and native CSS to Redux Toolkit and Tailwind CSS. The original README points to [v1.0](https://github.com/tamer780/react-food-order-app/tree/v1.0) for the earlier implementation.
+The existing [migration pull request](https://github.com/tamer780/react-food-order-app/pull/1) documents the move from Context API and native CSS to Redux Toolkit and Tailwind CSS.
 
 ## Demo boundaries
 
